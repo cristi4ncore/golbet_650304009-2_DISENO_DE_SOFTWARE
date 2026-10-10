@@ -5,30 +5,23 @@ using GolBet.Services.Implementations;
 using GolBet.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
+using GolBet.Repositories.Data;
 
 namespace GolBet.Web.Controllers
 
 {
 
     public class MatchesController : Controller
-
     {
-
         private readonly IMatchService _matchService;
-
         private readonly ITeamService _teamService;
-
         public MatchesController(IMatchService matchService, ITeamService teamService)
 
         {
-
             _matchService = matchService;
-
             _teamService = teamService;
-
         }
-
-
 
         // GET /Matches            -> all matches 
 
@@ -37,16 +30,11 @@ namespace GolBet.Web.Controllers
         public async Task<IActionResult> Index(MatchStatus? status)
 
         {
-
             ViewBag.CurrentStatus = status;
-
             var board = await _matchService.GetBoardAsync(status);
-
             return View(board);
 
         }
-
-
 
         // GET /Matches/Detail/3 
 
@@ -68,14 +56,12 @@ namespace GolBet.Web.Controllers
 
         // GET /Matches/Create 
 
+        [Authorize(Roles = DbSeeder.AdminRole)]
         public async Task<IActionResult> Create()
 
         {
-
             await LoadTeamsAsync();
-
             return View(new MatchFormDto());
-
         }
 
 
