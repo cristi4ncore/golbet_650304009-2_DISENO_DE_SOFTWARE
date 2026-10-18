@@ -27,13 +27,14 @@ namespace GolBet.Web.Controllers
 
         // GET /Matches?status=Scheduled -> filtered board 
 
-        public async Task<IActionResult> Index(MatchStatus? status)
-
+        public async Task<IActionResult> Index(MatchStatus? status, string? search)
         {
             ViewBag.CurrentStatus = status;
-            var board = await _matchService.GetBoardAsync(status);
-            return View(board);
+            ViewBag.CurrentSearch = search; // ¡Faltaba esto para que no se pierda!
 
+            // Y debes pasarle ambos parámetros a tu servicio (asumiendo que actualizaste el servicio)
+            var board = await _matchService.GetBoardAsync(status, search);
+            return View(board);
         }
 
         // GET /Matches/Detail/3 

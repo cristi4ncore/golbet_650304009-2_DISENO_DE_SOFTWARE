@@ -17,28 +17,78 @@
 @{
     var current = (MatchStatus?)ViewBag.CurrentStatus;
 }
+
+<!-- Formulario de búsqueda -->
+<form method="get" asp-action="Index" class="mb-4">
+    <!-- Mantiene el filtro de estado si existe -->
+    @if (ViewBag.CurrentStatus != null)
+    {
+        <input type="hidden" name="status" value="@ViewBag.CurrentStatus" />
+    }
+
+    <div class="input-group">
+        <!-- El valor se mantiene usando ViewBag.CurrentSearch -->
+        <input type="text" name="search" class="form-control" placeholder="Buscar por equipo..." value="@ViewBag.CurrentSearch" />
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </div>
+</form>
+
 <div class="d-flex gap-2 flex-wrap mb-4">
     <a asp-action="Index"
+       asp-route-search="@ViewBag.CurrentSearch"
        class="btn btn-sm @(current is null ? "btn-success" : "btn-outline-success")">
         Todos
     </a>
-    <a asp-action="Index" asp-route-status="@MatchStatus.Scheduled"
+    <a asp-action="Index"
+       asp-route-status="@MatchStatus.Scheduled"
+       asp-route-search="@ViewBag.CurrentSearch"
        class="btn btn-sm @(current == MatchStatus.Scheduled ? "btn-success" : "btn-outline-success")">
         Programados
     </a>
-    <a asp-action="Index" asp-route-status="@MatchStatus.InProgress"
+
+    <a asp-action="Index"
+       asp-route-status="@MatchStatus.InProgress"
+       asp-route-search="@ViewBag.CurrentSearch"
        class="btn btn-sm @(current == MatchStatus.InProgress ? "btn-success" : "btn-outline-success")">
         En juego
     </a>
-    <a asp-action="Index" asp-route-status="@MatchStatus.Finished"
+   
+    <a asp-action="Index"
+       asp-route-status="@MatchStatus.Finished"
+       asp-route-search="@ViewBag.CurrentSearch"
        class="btn btn-sm @(current == MatchStatus.Finished ? "btn-success" : "btn-outline-success")">
         Finalizados
     </a>
+
 </div>
 
-<div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
-    @foreach (var match in Model)
-    {
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-warning text-center">
+        <h4>
+            @if (!string.IsNullOrWhiteSpace(ViewBag.CurrentSearch as string))
+            {
+                @:No hay partidos para "@ViewBag.CurrentSearch"
+            }
+            else
+            {
+                @:No hay partidos disponibles con los filtros seleccionados.
+            }
+        </h4>
+
+        <a asp-action="Index"
+           class="btn btn-secondary mt-3">
+            Volver a la cartelera de partidos
+        </a>
+    </div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+        
+        
+            @foreach (var match in Model)
+                {
         <div class="col">
             <div class="card h-100 shadow-sm">
                 <div class="card-header d-flex justify-content-between align-items-center">
@@ -121,6 +171,18 @@
                     </div>
                 </div>
             </div>
-        </div>
-    }
+           }
 </div>
+
+        }
+    </div>
+}
+    
+    
+    
+    
+    
+    
+    
+    
+    

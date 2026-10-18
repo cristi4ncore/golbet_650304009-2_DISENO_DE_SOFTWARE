@@ -11,19 +11,28 @@ namespace GolBet.Repositories.Implementations
     {
         public MatchRepository(AppDbContext context) : base(context) { }
 
-        public async Task<IEnumerable<Match>> GetAllWithTeamsAsync(MatchStatus? status = null)
+        public async Task<IEnumerable<Match>> GetAllWithTeamsAsync(MatchStatus? status = null, string? search = null)
         {
-            var query = _dbSet
+            var query = _context.Matches
                 .Include(m => m.HomeTeam)
                 .Include(m => m.AwayTeam)
-                .Where(m => m.IsActive)
-                .AsNoTracking()
                 .AsQueryable();
 
             if (status.HasValue)
+            {
                 query = query.Where(m => m.Status == status.Value);
+            }
 
-            return await query.OrderBy(m => m.Date).ToListAsync();
+            // Nuevo filtro de composición para el buscador
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var lowerSearch = search.ToLower();
+                query = query.Where(m =>
+                    m.HomeTeam.Name.ToLower().Contains(lowerSearch) ||
+                    m.AwayTeam.Name.ToLower().Contains(lowerSearch));
+            }
+
+            return await query.ToListAsync();
         }
 
         public async Task<Match?> GetByIdWithDetailsAsync(int id)
