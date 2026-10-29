@@ -12,11 +12,11 @@ using System.Globalization;
 
 
 var culture = new CultureInfo("es-CO");
+culture.NumberFormat = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+culture.NumberFormat.NumberGroupSeparator = "";
 
 CultureInfo.DefaultThreadCurrentCulture = culture;
-
 CultureInfo.DefaultThreadCurrentUICulture = culture;
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
@@ -47,15 +47,11 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 
 // Open generic registration: one line, a repository for every entity 
-
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-
-// Specific repositories 
-
 builder.Services.AddScoped<IMatchRepository, MatchRepository>();
-
+builder.Services.AddScoped<IBetRepository, BetRepository>();
 builder.Services.AddScoped<ITeamService, TeamService>();
-
+builder.Services.AddScoped<IBetService, BetService>();
 
 // AutoMapper: scans the assembly containing MappingProfile for all profiles 
 

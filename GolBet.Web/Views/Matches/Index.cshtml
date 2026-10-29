@@ -18,9 +18,9 @@
     var current = (MatchStatus?)ViewBag.CurrentStatus;
 }
 
-<!-- Formulario de búsqueda -->
+
 <form method="get" asp-action="Index" class="mb-4">
-    <!-- Mantiene el filtro de estado si existe -->
+    
     @if (ViewBag.CurrentStatus != null)
     {
         <input type="hidden" name="status" value="@ViewBag.CurrentStatus" />
